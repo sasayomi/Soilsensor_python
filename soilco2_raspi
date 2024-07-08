@@ -227,7 +227,7 @@ def quit(self):
 root = tk.Tk()
 root.title("SoilSensor")
 #root.state('zoomed')
-root.attributes('-fullscreen', True)
+#root.attributes('-fullscreen', True) #raspiでは不要
 #root.geometry("1000x800")
 root.resizable(False, False)
 root["bg"] = "black"
