@@ -1,4 +1,4 @@
-#python->SLT5006またはSLT5009を動かす+CO2表示 win/raspi
+#python->SLT5006,SLT5007,SLT5009を動かす+CO2表示 win/raspi 時刻表示機能停止
 
 import serial
 import serial.tools.list_ports
