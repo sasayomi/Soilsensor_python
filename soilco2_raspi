@@ -1,4 +1,5 @@
 #python->SLT5006,SLT5007,SLT5009を動かす+CO2表示 win/raspi 時刻表示機能停止
+#SLT5009 not serialnumber
 
 import serial
 import serial.tools.list_ports
@@ -18,12 +19,12 @@ def auto_detect_serial_port():
 	ports = list(serial.tools.list_ports.comports())
 	for p in ports:
 		print(p)
-		if 'USB Serial' in p.description: #win rasp->FT232R
+		if 'FT232R' in p.description: #win USB Serial rasp FT232R
 			portflag=1
 			sensor=6
 			print("UART")
 			return p.device
-		elif 'CP210x' in p.description: #win rasp->CP2102
+		elif 'CP210x' in p.description: #win CP210x rasp->CP2102
 			portflag=1
 			sensor=9
 			print("RS485")
@@ -67,7 +68,7 @@ def co2():
 	return num
 
 # 土壌センサシリアル通信
-val=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+val=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 temp=0
 VWC=0
 def repeat():
@@ -115,7 +116,7 @@ def repeat():
 			break
 		time.sleep(0.5)
 
-	com3 = [ 0x01, 0x13, 0x10, 0xFC, 0x2C]
+	com3 = [ 0x01, 0x00, 0x22, 0x19, 0xA0]#Alldata Nomal=01 13 10 Fc 2C
 	send1 = bytes(com3)
 	if sensor==7:
 		send1 = [0,19,16,60,125]
@@ -145,6 +146,8 @@ def repeat():
 	VWCC=(val[11]+val[12]*256)*0.1
 	pore=(val[15]+val[16]*256)*0.001
 '''
+	SN=val[6]+val[7]*256+val[8]*256*256+val[9]*256*256*256
+	print("SerialNumber",SN)
 
 	print("temp",temp,"℃")
 	print("ECBulk",bulk,"dS/m")
@@ -159,39 +162,39 @@ def repeat():
 #出力関数
 def tempx():
 	global val
-	t=(val[3]+val[4]*256)*0.0625
+	t=(val[22]+val[23]*256)*0.0625 #old 3,4 +19
 	if sensor==9:
 		t=(val[4]+val[3]*256)*0.0625
 	return t
 def vwcx():
     global val
-    vv=(val[9]+val[10]*256)*0.1
+    vv=(val[28]+val[29]*256)*0.1 #9,10
     if sensor==9:
          vv=(val[10]+val[9]*256)*0.1
     return vv
 
 def porex():
     global val
-    p=(val[15]+val[16]*256)*0.001
+    p=(val[34]+val[35]*256)*0.001 #15,16
     if sensor==9:
           p=(val[16]+val[15]*256)*0.001	
     return p
 def bulkx():
     global val
-    b=(val[5]+val[6]*256)*0.001
+    b=(val[24]+val[25]*256)*0.001 #5,6
     if sensor==9:
          b=(val[6]+val[5]*256)*0.001
     return b
 def vwcrx():
     global val
-    vr=(val[7]+val[8]*256)*0.1
+    vr=(val[26]+val[27]*256)*0.1 #7,8
     if sensor==9:
          vr=(val[8]+val[7]*256)*0.1
     return vr
 
 def vwccx():
     global val
-    vc=(val[11]+val[12]*256)*0.1
+    vc=(val[30]+val[31]*256)*0.1 #11,12
     if sensor==9:
          vc=(val[12]+val[11]*256)*0.1
     return vc
