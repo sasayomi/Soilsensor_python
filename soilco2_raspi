@@ -146,8 +146,8 @@ def repeat():
 	VWCC=(val[11]+val[12]*256)*0.1
 	pore=(val[15]+val[16]*256)*0.001
 '''
-	SN=val[6]+val[7]*256+val[8]*256*256+val[9]*256*256*256
-	print("SerialNumber",SN)
+
+	print("SerialNumber",snx())
 
 	print("temp",temp,"℃")
 	print("ECBulk",bulk,"dS/m")
@@ -160,11 +160,16 @@ def repeat():
 
 
 #出力関数
+def snx():
+	global val
+	sn=val[6]+val[7]*256+val[8]*256*256+val[9]*256*256*256 #5009 9 10 11 12
+	return sn
+
 def tempx():
 	global val
-	t=(val[22]+val[23]*256)*0.0625 #old 3,4 +19
+	t=(val[22]+val[23]*256)*0.0625 #old 3,4 +19 
 	if sensor==9:
-		t=(val[4]+val[3]*256)*0.0625
+		t=(val[4]+val[3]*256)*0.0625  #5009 24 23 +20
 	return t
 def vwcx():
     global val
